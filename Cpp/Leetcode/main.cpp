@@ -452,6 +452,25 @@ namespace Week311_4{
     };
 }
 
+namespace P1636{
+    class Solution {
+    public:
+        vector<int> frequencySort(vector<int>& nums) {
+            unordered_map<int,int> frequency;
+            for(const int& num:nums){
+                frequency[num]++;
+            }
+            sort(nums.begin(),nums.end(),[&](const int& a,const int& b){
+                if(frequency[a]==frequency[b]){
+                    return a>b;
+                }
+                return frequency[a]< frequency[b];
+            });
+            return nums;
+        }
+    };
+}
+
 int main() {
     auto solution = new Week311_2::Solution();
     int ans = solution->longestContinuousSubstring("adjp");
