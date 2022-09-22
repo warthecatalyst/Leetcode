@@ -471,6 +471,31 @@ namespace P1636{
     };
 }
 
+namespace P1640{
+class Solution {
+public:
+    bool canFormArray(vector<int>& arr, vector<vector<int>>& pieces) {
+        unordered_map<int,int> piecesMap;
+        for(int i = 0;i<pieces.size();i++){
+            piecesMap[pieces[i][0]] = i;
+        }
+        for(int i = 0;i<arr.size();){
+            if(piecesMap.count(arr[i])==0){
+                return false;
+            }
+            int j = piecesMap[arr[i]], len = pieces[j].size();
+            for(int k = 0;k<len;k++){
+                if(arr[i+k]!=pieces[j][k]){
+                    return false;
+                }
+            }
+            i += len;
+        }
+        return true;
+    }
+};
+}
+
 int main() {
     auto solution = new Week311_2::Solution();
     int ans = solution->longestContinuousSubstring("adjp");
