@@ -496,6 +496,32 @@ public:
 };
 }
 
+namespace mianshi01_02{
+class Solution {
+public:
+    bool CheckPermutation(string s1, string s2) {
+        if(s1.size()!=s2.size()){
+            return false;
+        }
+        unordered_map<char,int> s1map;
+        unordered_map<char,int> s2map;
+        for(char c:s1){
+            s1map[c]++;
+        }
+        for(char c:s2){
+            s2map[c]++;
+        }
+        for(auto iter = s1map.begin();iter!=s1map.end();iter++){
+            int ans2 = s2map[iter->first];
+            if(ans2!=iter->second){
+                return false;
+            }
+        }
+        return true;
+    }
+};
+}
+
 int main() {
     auto solution = new Week311_2::Solution();
     int ans = solution->longestContinuousSubstring("adjp");
