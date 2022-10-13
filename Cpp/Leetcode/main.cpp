@@ -522,6 +522,46 @@ public:
 };
 }
 
+namespace P1790{
+class Solution {
+public:
+    bool areAlmostEqual(string s1, string s2) {
+        if(s1==s2){
+            return true;
+        }
+        int cnt = 0,len = s1.length();
+        int first = -1,second = -1;
+        for(int i = 0;i<len;i++){
+            if(s1[i]!=s2[i]){
+                cnt++;
+                if(first==-1){
+                    first = i;
+                }else if(second == -1){
+                    second = i;
+                }
+            }
+        }
+        return cnt==2&&(s1[first]==s2[second]&&s2[first]==s1[second]);
+    }
+};
+}
+
+namespace P769{
+class Solution {
+public:
+    int maxChunksToSorted(vector<int>& arr) {
+        int m = 0, res = 0;
+        for (int i = 0; i < arr.size(); i++) {
+            m = max(m, arr[i]);
+            if (m == i) {
+                res++;
+            }
+        }
+        return res;
+    }
+};
+}
+
 int main() {
     auto solution = new Week311_2::Solution();
     int ans = solution->longestContinuousSubstring("adjp");
