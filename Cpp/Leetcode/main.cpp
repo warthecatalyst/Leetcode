@@ -7,6 +7,7 @@
 #include <string>
 #include <stack>
 #include <deque>
+#include <queue>
 #include <set>
 #include <unordered_set>
 #include <map>
@@ -562,9 +563,270 @@ public:
 };
 }
 
+namespace P862{
+class Solution {
+public:
+    int shortestSubarray(vector<int>& nums, int k) {
+        int n = nums.size();
+        vector<int> preSum(n+1);
+        for(int i = 0;i<n;i++){
+            preSum[i+1] = preSum[i]+nums[i];
+        }
+        int res = n+1;
+        deque<int> qu;
+        for (int i = 0; i <= n; i++) {
+            long curSum = preSum[i];
+            while (!qu.empty() && curSum - preSum[qu.front()] >= k) {
+                res = min(res, i - qu.front());
+                qu.pop_front();
+            }
+            while (!qu.empty() && preSum[qu.back()] >= curSum) {
+                qu.pop_back();
+            }
+            qu.push_back(i);
+        }
+        return res < n + 1 ? res : -1;
+
+    }
+};
+}
+
+namespace P940{
+class Solution {
+    static const int MOD = 1e9+7;
+public:
+    int distinctSubseqII(string s) {
+        vector<int> last(26,-1);
+        int n = s.size();
+        vector<int> f(n,1);
+        for(int i = 0; i < n;i++){
+            for(int j = 0;j < 26;j++){
+                if(last[j]!=-1){
+                    f[i] = (f[i]+f[last[j]])%MOD;
+                }
+            }
+            last[s[i]-'a'] = i;
+        }
+        int ans = 0;
+        for(int i = 0;i<26;i++){
+            if(last[i]!=-1){
+                ans = (ans + f[last[i]]) % MOD;
+            }
+        }
+        return ans;
+    }
+};
+}
+
+namespace P1441{
+class Solution {
+    string push = "Push";
+    string pop = "Pop";
+public:
+    vector<string> buildArray(vector<int>& target, int n) {
+        int ed = target.back();
+        vector<string> ans;
+        int pt = 0;
+        for(int i = 1;i <= ed;i++){
+            if(i==target[pt]){
+                ans.push_back(push);
+                pt++;
+            }else{
+                ans.push_back(push);
+                ans.push_back(pop);
+            }
+        }
+        return ans;
+    }
+};
+}
+
+namespace P886{
+class Solution {
+    //经典染色法问题
+public:
+    bool possibleBipartition(int n, vector<vector<int>>& dislikes) {
+        vector<int> color(n+1,0);
+        vector<vector<int>> g(n+1);
+        for(auto &p:dislikes){
+            g[p[0]].push_back(p[1]);
+            g[p[1]].push_back(p[0]);
+        }
+        for(int i = 1;i<=n;i++){
+            if(color[i]==0){
+                queue<int> qu;
+                color[i] = 1;
+                qu.push(i);
+                while(!qu.empty()){
+                    auto t = qu.front();
+                    qu.pop();
+                    for(auto &next:g[t]){
+                        if(color[next]>0&&color[next] == color[t]){
+                            return false;
+                        }
+                        if (color[next] == 0) {
+                            color[next] = 3 ^ color[t];
+                            qu.push(next);
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+};
+}
+
+namespace P902{
+class Solution {
+public:
+    int atMostNGivenDigitSet(vector<string>& digits, int n) {
+        string s = to_string(n);
+        int m = digits.size(), k = s.size();
+        vector<int> bits;
+        bool isLimit = true;
+        for (int i = 0; i < k; i++) {
+            if (!isLimit) {
+                bits.emplace_back(m - 1);
+            } else {
+                int selectIndex = -1;
+                for (int j = 0; j < m; j++) {
+                    if (digits[j][0] <= s[i]) {
+                        selectIndex = j;
+                    } else {
+                        break;
+                    }
+                }
+                if (selectIndex >= 0) {
+                    bits.emplace_back(selectIndex);
+                    if (digits[selectIndex][0] < s[i]) {
+                        isLimit = false;
+                    }
+                } else {
+                    int len = bits.size();
+                    while (!bits.empty() && bits.back() == 0) {
+                        bits.pop_back();
+                    }
+                    if (!bits.empty()) {
+                        bits.back() -= 1;
+                    } else {
+                        len--;
+                    }
+                    while ((int)bits.size() <= len) {
+                        bits.emplace_back(m - 1);
+                    }
+                    isLimit = false;
+                }
+            }
+        }
+        int ans = 0;
+        for (int bit : bits) {
+            ans = ans * m + (bit + 1);
+        }
+        return ans;
+    }
+};
+
+class zijie{
+public:
+    //约定nums.size()>0, n >= 0
+    int maxIntLEN(vector<int> nums, int n){      //从nums中组合出小于等于n的最大数
+        if(nums.size()==1&&nums[0]==0){
+            return 0;
+        }
+        sort(nums.begin(),nums.end());
+        string n_str = to_string(n);
+        cout << n_str << endl;
+        string res;
+        int w_cnt = n_str.size();
+        //先判断w_cnt位数中最小的是不是大于n
+        for(int i = 0;i<w_cnt;i++){
+            if(i==0&&nums[0]==0){
+                res.push_back(nums[1]+'0');
+            }else{
+                res.push_back(nums[0]+'0');
+            }
+        }
+        if(stoi(res)>n){
+            res.clear();
+            for(int i = 0;i<w_cnt-1;i++){
+                res.push_back(nums.back()+'0');
+            }
+            if(res.empty()){
+                return 0;
+            }
+            return stoi(res);
+        }
+        res.clear();
+        dfs(nums,n_str,res,0, true);
+        return stoi(res);
+    }
+
+    //to be sure it's enough
+    bool dfs(const vector<int>& nums,const string& n_str,string &res,int i,bool greedy){
+        cout<< "i = " << i << ", res = " << res << endl;
+        if(i==n_str.size()-1){
+            if(greedy){
+                int j = nums.size()-1;
+                for(;j>=0;j--){
+                    int num = nums[j];
+                    if(num+'0'<=n_str[i]){
+                        break;
+                    }
+                }
+                if(j>=0){
+                    res.push_back(nums[j]+'0');
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                res.push_back(nums.back()+'0');
+                return true;
+            }
+        }
+        //greedy
+        if(greedy){
+            int j = nums.size()-1;
+            for(;j>=0;j--){
+                int num = nums[j];
+                if(num+'0'<=n_str[i]){
+                    break;
+                }
+            }
+            if(j>=0){
+                res.push_back(nums[j]+'0');
+                if(dfs(nums,n_str,res,i+1, true)) return true;
+                else{
+                    res.pop_back();
+                    for(;j>=0;j--){
+                        int num = nums[j];
+                        if(num+'0'<n_str[i]){
+                            break;
+                        }
+                    }
+                    if(j>=0){
+                        res.push_back(nums[j]+'0');
+                        return dfs(nums,n_str,res, i+1, false);
+                    }else{
+                        return false;
+                    }
+                }
+            }else{
+                return false;
+            }
+        }else{
+            res.push_back(nums.back()+'0');
+            dfs(nums,n_str,res,i+1,false);
+            return true;
+        }
+    }
+};
+}
+
 int main() {
-    auto solution = new Week311_2::Solution();
-    int ans = solution->longestContinuousSubstring("adjp");
-    cout<<ans<<endl;
-    return 0;
+    auto solution = new P902::zijie();
+    vector<int> vec = {4,5,6};
+    auto res = solution->maxIntLEN(vec,6443);
+    cout<<res<<endl;
 }
