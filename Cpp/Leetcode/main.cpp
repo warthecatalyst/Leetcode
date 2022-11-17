@@ -824,6 +824,285 @@ public:
 };
 }
 
+namespace P1700{
+class Solution {
+public:
+    int countStudents(vector<int>& students, vector<int>& sandwiches) {
+        int s1 = accumulate(students.begin(), students.end(), 0);
+        int s0 = students.size() - s1;
+        for (int i = 0; i < sandwiches.size(); i++) {
+            if (sandwiches[i] == 0 && s0 > 0) {
+                s0--;
+            } else if (sandwiches[i] == 1 && s1 > 0) {
+                s1--;
+            } else {
+                break;
+            }
+        }
+        return s0 + s1;
+    }
+};
+}
+
+namespace P779{
+class Solution {
+public:
+    int kthGrammar(int n, int k) {
+        if(k==0){
+            return 0;
+        }
+        if(k > (1 << (n - 2))){
+            return 1 ^ kthGrammar(n-1,k-(1<<(n-2)));
+        }
+        return kthGrammar(n-1,k);
+    }
+};
+}
+
+namespace P210{
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> g(numCourses,vector<int>());
+        vector<vector<int>> anti_g(numCourses,vector<int>());
+        vector<int> degrees(numCourses,0);
+        for(auto &pre:prerequisites){
+            g[pre[1]].push_back(pre[0]);
+            anti_g[pre[0]].push_back(pre[1]);
+            degrees[pre[0]]++;
+        }
+
+        queue<int> qu;
+        vector<bool> vis(numCourses,false);
+        for(int i = 0;i<numCourses;i++){
+            if(degrees[i]==0){
+                qu.push(i);
+                vis[i] = true;
+            }
+        }
+
+        vector<int> res;
+        while(!qu.empty()){
+            int t = qu.front();
+            qu.pop();
+            res.push_back(t);
+            for(auto& next:g[t]){
+                if(vis[next]||!pre_set(anti_g,next,vis)) continue;
+                qu.push(next);
+                vis[next] = true;
+            }
+        }
+        if(res.size()<numCourses) return {};
+        return res;
+    }
+
+    bool pre_set(vector<vector<int>>& anti_g,int next,vector<bool>& visited){
+        for(int pre:anti_g[next]){
+            if(!visited[pre]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+//    bool checkCircle(vector<vector<int>> &graph,vector<int>& degrees){
+//        set<int> starts;
+//        for(int i = 0;i<degrees.size();i++){
+//            if(degrees[i]==0){
+//                starts.insert(i);
+//            }
+//        }
+//        for(int start:starts){
+//            set<int> visited;
+//            if(!dfs(graph,start,visited)){
+//                return true;
+//            }
+//            visited.clear();
+//        }
+//        return false;
+//    }
+//
+//    bool dfs(vector<vector<int>> &graph,int cur,set<int>& visited){
+//        if(visited.count(cur)) return false;
+//        visited.insert(cur);
+//        for(int next:graph[cur]){
+//            if(!dfs(graph,next,visited)) return false;
+//        }
+//        return true;
+//    }
+};
+}
+
+namespace P764{
+class Solution {
+public:
+    int orderOfLargestPlusSign(int n, vector<vector<int>>& mines) {
+        vector<vector<int>> dp(n, vector<int>(n, n));
+        unordered_set<int> banned;
+        for (auto &&vec : mines) {
+            banned.emplace(vec[0] * n + vec[1]);
+        }
+        int ans = 0;
+        for(int i = 0;i<n;i++){
+            int count = 0;
+            for(int j = 0;j<n;j++){ //left
+                if(banned.count(i*n+j)){
+                    count = 0;
+                }else{
+                    count++;
+                }
+                dp[i][j] = std::min(dp[i][j],count);
+            }
+            count = 0;
+            for(int j = n-1;j>=0;j--){  //right
+                if(banned.count(i*n+j)){
+                    count = 0;
+                }else{
+                    count++;
+                }
+                dp[i][j] = std::min(dp[i][j],count);
+            }
+        }
+
+        for(int j = 0;j<n;j++) {
+            int count = 0;
+            //up
+            for (int i = 0; i < n; i++) {
+                if (banned.count(i * n + j)) {
+                    count = 0;
+                } else {
+                    count++;
+                }
+                dp[i][j] = std::min(dp[i][j], count);
+            }
+            count = 0;
+            //down
+            for (int i = n - 1; i >= 0; i--) {
+                if (banned.count(i * n + j)) {
+                    count = 0;
+                } else {
+                    count++;
+                }
+                dp[i][j] = std::min(dp[i][j], count);
+                ans = max(ans, dp[j][i]);
+            }
+        }
+        return ans;
+    }
+};
+}
+
+namespace P805{
+class Solution {
+public:
+    bool splitArraySameAverage(vector<int>& nums) {
+        int n = nums.size(), m = n/2;
+        if(n==1)
+            return false;
+
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        for (int &x : nums) {
+            x = x * n - sum;
+        }
+
+        unordered_set<int> left;
+        for (int i = 1; i < (1 << m); i++) {
+            int tot = 0;
+            for (int j = 0; j < m; j++) {
+                if (i & (1 << j)) {
+                    tot += nums[j];
+                }
+            }
+            if (tot == 0) {
+                return true;
+            }
+            left.emplace(tot);
+        }
+
+        int rsum = accumulate(nums.begin() + m, nums.end(), 0);
+        for (int i = 1; i < (1 << (n - m)); i++) {
+            int tot = 0;
+            for (int j = m; j < n; j++) {
+                if (i & (1 << (j - m))) {
+                    tot += nums[j];
+                }
+            }
+            if (tot == 0 || (rsum != tot && left.count(-tot))) {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+}
+
+namespace P1710{
+class Solution {
+public:
+    int maximumUnits(vector<vector<int>>& boxTypes, int truckSize) {
+        sort(boxTypes.begin(),boxTypes.end(),[](const auto& a, const auto& b){
+            return a[1]>b[1];
+        });
+        int ans = 0;
+        for(int i = 0;i<boxTypes.size();i++){
+            const auto &boxType = boxTypes[i];
+            if(truckSize<=0){
+                break;
+            }
+            int cur_pick = boxType[0]<truckSize?boxType[0]:truckSize;
+            ans += boxType[1] * cur_pick;
+            truckSize-=cur_pick;
+        }
+        return ans;
+    }
+};
+}
+
+namespace P775{
+class Solution {
+public:
+    bool isIdealPermutation(vector<int>& nums) {
+        for(int i = 0;i<nums.size();i++){
+            if(nums[i]<i-1||nums[i]>i+1){
+                return false;
+            }
+        }
+        return true;
+    }
+};
+}
+
+namespace P792{
+class Solution {
+public:
+    int numMatchingSubseq(string s, vector<string>& words) {
+        vector<vector<int>> pos(26);
+        for(int i = 0;i<s.size();i++){
+            pos[s[i]-'a'].push_back(i);
+        }
+
+        int res = words.size();
+        for(auto &word:words){
+            if(word.size()>s.size()){
+                --res;
+                continue;
+            }
+            int p = -1;
+            for(char c:word){
+                auto &ps = pos[c-'a'];
+                auto it = upper_bound(ps.begin(),ps.end(),p);
+                if(it==ps.end()){
+                    --res;
+                    break;
+                }
+                p = *it;
+            }
+        }
+        return res;
+    }
+};
+}
+
 int main() {
     auto solution = new P902::zijie();
     vector<int> vec = {4,5,6};
