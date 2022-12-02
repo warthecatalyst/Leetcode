@@ -1164,6 +1164,198 @@ public:
 };
 }
 
+namespace P882{
+class Solution {
+public:
+    inline int encode(int u,int v,int n){
+        return u*n+v;
+    }
+
+    int reachableNodes(vector<vector<int>>& edges, int maxMoves, int n) {
+        vector<vector<pair<int,int>>> adList(n);
+        for(auto &edge:edges){
+            int u = edge[0], v = edge[1], nodes = edge[2];
+            adList[u].emplace_back(v,nodes);
+            adList[v].emplace_back(u,nodes);
+        }
+
+        unordered_map<int,int> used;
+        unordered_set<int> visited;
+        int reachableNodes = 0;
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        pq.push({0,0});
+        while (!pq.empty() && pq.top().first <= maxMoves) {
+            auto [step, u] = pq.top();
+            pq.pop();
+            if (visited.count(u)) {
+                continue;
+            }
+            visited.emplace(u);
+            reachableNodes++;
+            for (auto [v, nodes] : adList[u]) {
+                if (nodes + step + 1 <= maxMoves && !visited.count(v)) {
+                    pq.emplace(nodes + step + 1, v);
+                }
+                used[encode(u, v, n)] = min(nodes, maxMoves - step);
+            }
+        }
+
+        for (auto &edge : edges) {
+            int u = edge[0], v = edge[1], nodes = edge[2];
+            reachableNodes += min(nodes, used[encode(u, v, n)] + used[encode(v, u, n)]);
+        }
+        return reachableNodes;
+    }
+};
+}
+
+namespace P1752{
+class Solution {
+public:
+    bool check(vector<int>& nums) {
+        int n = nums.size(), flag = false;
+        for(int i = 0;i<n-1;i++){
+            if(nums[i]>nums[i+1]){
+                if(!flag) flag = true;
+                else return false;
+            }
+        }
+        return !flag || flag && nums.back()<=nums[0];
+    }
+};
+}
+
+namespace P813{
+class Solution {
+public:
+    double largestSumOfAverages(vector<int>& nums, int k) {
+        int n = nums.size();
+        vector<double> prefix(n + 1);
+        for (int i = 0; i < n; i++) {
+            prefix[i + 1] = prefix[i] + nums[i];
+        }
+        vector<double> dp(n + 1);
+        for (int i = 1; i <= n; i++) {
+            dp[i] = prefix[i] / i;
+        }
+        for (int j = 2; j <= k; j++) {
+            for (int i = n; i >= j; i--) {
+                for (int x = j - 1; x < i; x++) {
+                    dp[i] = max(dp[i], dp[x] + (prefix[i] - prefix[x]) / (i - x));
+                }
+            }
+        }
+        return dp[n];
+    }
+};
+}
+
+namespace P1758{
+class Solution {
+public:
+    int minOperations(string s) {
+        int cnt = 0;
+        for (int i = 0; i < s.size(); i++) {
+            char c = s[i];
+            if (c != ('0' + i % 2)) {
+                cnt++;
+            }
+        }
+        return min(cnt, (int)s.size() - cnt);
+    }
+};
+}
+
+namespace P895{
+class FreqStack {
+public:
+    FreqStack() {
+        maxFreq = 0;
+    }
+
+    void push(int val) {
+        freq[val]++;
+        group[freq[val]].push(val);
+        maxFreq = max(maxFreq, freq[val]);
+    }
+
+    int pop() {
+        int val = group[maxFreq].top();
+        freq[val]--;
+        group[maxFreq].pop();
+        if (group[maxFreq].empty()) {
+            maxFreq--;
+        }
+        return val;
+    }
+
+private:
+    unordered_map<int, int> freq;
+    unordered_map<int, stack<int>> group;
+    int maxFreq;
+};
+}
+
+namespace P1779{
+class Solution {
+public:
+    int nearestValidPoint(int x, int y, vector<vector<int>>& points) {
+        int idx = -1, min_dis = INT32_MAX;
+        for(int i = 0;i<points.size();i++){
+            auto& point = points[i];
+            if(point[0]==x||point[1]==y){
+                if(abs(point[0]-x)+abs(point[1]-y)<min_dis){
+                    idx = i;
+                    min_dis = abs(point[0]-x)+abs(point[1]-y);
+                }
+            }
+        }
+        return idx;
+    }
+};
+}
+
+namespace P1769{
+class Solution {
+public:
+    vector<int> minOperations(string boxes) {
+        int left = boxes[0] - '0', right = 0, operations = 0;
+        int n = boxes.size();
+        for (int i = 1; i < n; i++) {
+            if (boxes[i] == '1') {
+                right++;
+                operations += i;
+            }
+        }
+        vector<int> res(n);
+        res[0] = operations;
+        for (int i = 1; i < n; i++) {
+            operations += left - right;
+            if (boxes[i] == '1') {
+                left++;
+                right--;
+            }
+            res[i] = operations;
+        }
+        return res;
+    }
+};
+}
+
+namespace P27{
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        for(int i = nums.size()-1;i>=0;i--){
+            if(nums[i]==val){
+                nums.erase(nums.begin()+i);
+            }
+        }
+        return nums.size();
+    }
+};
+}
+
 int main() {
     auto solution = new P902::zijie();
     vector<int> vec = {4,5,6};

@@ -1,27 +1,3 @@
 # ninja log v5
-0	1551	6851941720440225	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-1555	1764	6851941722500433	Leetcode.exe	15bfdaedd682af74
-6	2493	6884783275529118	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-2495	3146	6884783282019571	Leetcode.exe	15bfdaedd682af74
-7	3028	6884787180152960	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-3029	3452	6884787184793324	Leetcode.exe	15bfdaedd682af74
-5	1406	6884787619164243	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-1407	1580	6884787620884367	Leetcode.exe	15bfdaedd682af74
-5	2345	6884787947950938	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-2346	2969	6884787954101399	Leetcode.exe	15bfdaedd682af74
-8	2745	6884790227996988	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-2747	3272	6884790233237378	Leetcode.exe	15bfdaedd682af74
-5	2784	6884790476908661	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-2785	3373	6884790482719082	Leetcode.exe	15bfdaedd682af74
-7	3415	6884791012469425	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-3417	3787	6884791017199763	Leetcode.exe	15bfdaedd682af74
-5	2418	6884791600699308	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-2419	2910	6884791603819566	Leetcode.exe	15bfdaedd682af74
-9	3025	6884794306475320	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-3026	3534	6884794311555678	Leetcode.exe	15bfdaedd682af74
-5	2513	6884796060276284	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-2514	2835	6884796063356537	Leetcode.exe	15bfdaedd682af74
-6	2528	6884796170119744	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
-2529	2901	6884796173600027	Leetcode.exe	15bfdaedd682af74
 6	2315	6884797044034732	CMakeFiles/Leetcode.dir/main.cpp.obj	9eb0f810eccc2673
 2316	2816	6884797047564996	Leetcode.exe	15bfdaedd682af74
