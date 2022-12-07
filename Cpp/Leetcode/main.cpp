@@ -1356,9 +1356,187 @@ public:
 };
 }
 
+namespace P1796 {
+    class Solution {
+    public:
+        int secondHighest(string s) {
+            int first = -1, second = -1;
+            for (auto c: s) {
+                if (isdigit(c)) {
+                    int num = c - '0';
+                    if (num > first) {
+                        second = first;
+                        first = num;
+                    } else if (num < first && num > second) {
+                        second = num;
+                    }
+                }
+            }
+            return second;
+        }
+    };
+}
+
+namespace P1774{
+    class Solution {
+    public:
+        int closestCost(vector<int>& baseCosts, vector<int>& toppingCosts, int target) {
+            int n = baseCosts.size(), m = toppingCosts.size(), statusLimit = (int)pow(3,m);
+            set<int> toppingCostSet;
+            for(int status = 0;status<statusLimit;status++){
+                auto select = to3str(status,m);
+                //cout << "select = " << select << endl;
+                int cur_cost = 0;
+                for(int i = 0;i<select.size();i++){
+                    int choose = select[i]-'0';
+                    cur_cost += choose*toppingCosts[i];
+                }
+                //cout<< "cur_cost = " << cur_cost << endl;
+                toppingCostSet.insert(cur_cost);
+            }
+            // for(int cost:toppingCostSet){
+            //     cout << cost << endl;
+            //}
+            int minDiff = INT32_MAX, totalCost = INT32_MAX;
+            for(auto baseCost:baseCosts){
+                for(int toppingCost:toppingCostSet){
+                    auto cur_cost = baseCost + toppingCost;
+                    if(abs(cur_cost-target)<minDiff
+                       ||(abs(cur_cost-target)==minDiff&&cur_cost<totalCost)){
+                        minDiff = abs(cur_cost-target);
+                        totalCost = cur_cost;
+                    }
+                }
+            }
+            return totalCost;
+        }
+
+        string to3str(int status,int m){
+            string str;
+            while(status){
+                str+=(status%3)+'0';
+                status/=3;
+            }
+            while(str.size()<m){
+                str+='0';
+            }
+            reverse(str.begin(),str.end());
+            return str;
+        }
+    };
+}
+
+namespace P1687{
+class Solution {
+public:
+    int boxDelivering(vector<vector<int>>& boxes, int portsCount, int maxBoxes, int maxWeight) {
+        int n = boxes.size();
+        vector<int> p(n+1),w(n+1),neg(n+1);
+        vector<long long> W(n+1);
+        for (int i = 1; i <= n; ++i) {
+            p[i] = boxes[i - 1][0];
+            w[i] = boxes[i - 1][1];
+            if (i > 1) {
+                neg[i] = neg[i - 1] + (p[i - 1] != p[i]);
+            }
+            W[i] = W[i - 1] + w[i];
+        }
+
+        deque<int> opt = {0};
+        vector<int> f(n + 1), g(n + 1);
+
+        for (int i = 1; i <= n; ++i) {
+            while (i - opt.front() > maxBoxes || W[i] - W[opt.front()] > maxWeight) {
+                opt.pop_front();
+            }
+
+            f[i] = g[opt.front()] + neg[i] + 2;
+
+            if (i != n) {
+                g[i] = f[i] - neg[i + 1];
+                while (!opt.empty() && g[i] <= g[opt.back()]) {
+                    opt.pop_back();
+                }
+                opt.push_back(i);
+            }
+        }
+        return f[n];
+    }
+};
+}
+
+namespace P1805{
+class Solution {
+public:
+    int numDifferentIntegers(string word) {
+        unordered_set<string> s;
+        int n = word.size(),p1 = 0,p2;
+        while(true){
+            while (p1 < n && !isdigit(word[p1])) {
+                p1++;
+            }
+            if (p1 == n) {
+                break;
+            }
+            p2 = p1;
+            while (p2 < n && isdigit(word[p2])) {
+                p2++;
+            }
+            while (p2 - p1 > 1 && word[p1] == '0') { // 去除前导 0
+                p1++;
+            }
+            s.insert(word.substr(p1, p2 - p1));
+            p1 = p2;
+        }
+        return s.size();
+    }
+};
+}
+
+namespace P1775{
+class Solution {
+public:
+    int minOperations(vector<int>& nums1, vector<int>& nums2) {
+        if(6*nums1.size()<nums2.size()||6*nums2.size()<nums1.size()){
+            return -1;
+        }
+        int sum1 = accumulate(nums1.begin(),nums1.end(),0);
+        int sum2 = accumulate(nums2.begin(),nums2.end(),0);
+        if(sum1<sum2){
+            swap(nums1,nums2);
+            swap(sum1,sum2);
+        }
+        int n1 = nums1.size(),n2 = nums2.size();
+        int diff = sum1-sum2;
+        if(diff==0) return 0;
+
+        sort(nums1.begin(),nums1.end());
+        sort(nums2.begin(),nums2.end());
+        int i = n1-1,j = 0,ans = 0;
+        while(i >= 0 || j < n2){
+            int d1 = 0,d2 = 0;
+            if(i >= 0) d1 = nums1[i] - 1;
+            if(j < n2) d2 = 6 - nums2[j];
+            int maxd = max(d1,d2);
+            if(maxd == 0) return -1;
+            if(maxd >= diff) return ans + 1;
+            if(d1 == maxd){
+                i --;
+            }else{
+                j ++;
+            }
+            diff -= maxd;
+            ans ++;
+        }
+        return -1;
+    }
+};
+}
+
 int main() {
-    auto solution = new P902::zijie();
-    vector<int> vec = {4,5,6};
-    auto res = solution->maxIntLEN(vec,6443);
-    cout<<res<<endl;
+    auto solution = new P1774::Solution();
+    vector<int> baseCosts = {3,10};
+    vector<int> toppingCosts = {2,5};
+    int ans = solution->closestCost(baseCosts,toppingCosts,9);
+    cout << ans << endl;
 }
