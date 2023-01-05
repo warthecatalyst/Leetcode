@@ -9,10 +9,12 @@
 #include <deque>
 #include <queue>
 #include <set>
+#include <list>
 #include <unordered_set>
 #include <map>
 #include <unordered_map>
 #include <random>
+#include <bits.h>
 
 using namespace std;
 
@@ -1533,10 +1535,789 @@ public:
 };
 }
 
+namespace P1812{
+class Solution {
+public:
+    bool squareIsWhite(string coordinates) {
+        char c1 = coordinates[0], c2 = coordinates[1];
+        int i = c1-'a'+c2-'1';
+        return i%2;
+    }
+};
+}
+
+namespace P1780{
+class Solution {
+public:
+    bool checkPowersOfThree(int n) {
+        set<int> used;
+        while(n>=1){
+            cout << n << endl;
+            int cur = 1;
+            while(cur*3<=n){
+                cur *= 3;
+            }
+            if(!used.count(cur)){
+                used.insert(cur);
+                n -= cur;
+            }else{
+                return false;
+            }
+        }
+        return n==0;
+    }
+};
+}
+
+namespace P233{
+class Solution {
+public:
+    int countDigitOne(int n) {
+        long long mulk = 1;
+        int ans = 0;
+        for (int k = 0; n >= mulk; ++k) {
+            ans += (n / (mulk * 10)) * mulk + min(max(n % (mulk * 10) - mulk + 1, 0LL), mulk);
+            mulk *= 10;
+        }
+        return ans;
+    }
+};
+}
+
+namespace P1047{
+class Solution {
+public:
+    string removeDuplicates(string s) {
+        string stk;
+        for (char ch : s) {
+            if (!stk.empty() && stk.back() == ch) {
+                stk.pop_back();
+            } else {
+                stk.push_back(ch);
+            }
+        }
+        return stk;
+    }
+};
+}
+
+namespace P221{
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& matrix) {
+        if (matrix.size() == 0 || matrix[0].size() == 0) {
+            return 0;
+        }
+        int maxSize = 0;
+        int n = matrix.size(),m = matrix[0].size();
+        for(int i = 0;i<matrix.size();i++){
+            for(int j = 0;j<matrix[i].size();j++){
+                if(matrix[i][j]=='1'){
+                    //cout<< i <<"  "<< j <<endl;
+                    int size = 1;
+                    while(size<min(n-i,m-j)&& isSquare(i,j,matrix,size)){
+                        size++;
+                    }
+                    maxSize = max(maxSize,size*size);
+                }
+            }
+        }
+        return maxSize;
+    }
+
+    bool isSquare(int x,int y,vector<vector<char>>& matrix,int size){
+        //判断行
+        for(int j = y;j<=y+size;j++){
+            if(matrix[x+size][j]=='0'){
+                return false;
+            }
+        }
+        //判断列
+        for(int i = x;i<=x+size;i++){
+            if(matrix[i][y+size]=='0'){
+                return false;
+            }
+        }
+        return true;
+    }
+};
+}
+
+namespace P1691{
+class Solution {
+public:
+    int maxHeight(vector<vector<int>>& cuboids) {
+        int n = cuboids.size();
+        for(auto& cuboid:cuboids){
+            sort(cuboid.begin(),cuboid.end());
+        }
+        sort(cuboids.begin(),cuboids.end(),[](const auto& a,const auto& b){
+           return a[0]+a[1]+a[2] < b[0]+b[1]+b[2];
+        });
+        int ans = 0;
+        vector<int> dp(n);
+        for(int i = 0;i<n;i++){
+            dp[i] = cuboids[i][2];
+            for(int j = 0;j<i;j++){
+                if(cuboids[j][0]<=cuboids[i][0]&&
+                cuboids[j][1]<=cuboids[j][1]&&
+                cuboids[j][2]<=cuboids[j][2]){
+                    dp[i] = max(dp[i],cuboids[i][2]+dp[j]);
+                }
+            }
+            ans = max(ans,dp[i]);
+        }
+        return ans;
+    }
+};
+}
+
+namespace P1827{
+class Solution {
+public:
+    int minOperations(vector<int>& nums) {
+        int ans = 0;
+        for(int i = 0;i<nums.size()-1;i++){
+            if(nums[i+1]<=nums[i]){
+                ans += nums[i]+1-nums[i+1];
+                nums[i+1] = nums[i]+1;
+            }
+        }
+        return ans;
+    }
+};
+}
+
+namespace weekly_contest323_1{
+class Solution {
+public:
+    int deleteGreatestValue(vector<vector<int>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+        int del = 0, ans = 0;
+        while(del<m*n){
+            int max_ele = 0;
+            for(auto& line:grid){
+                auto idx = max_element(line.begin(),line.end());
+                if(*idx>max_ele){
+                    max_ele = *idx;
+                }
+                line.erase(idx);
+                del++;
+            }
+            ans += max_ele;
+        }
+        return ans;
+    }
+};
+}
+
+namespace weekly_contest323_2{
+class Solution {
+public:
+    int longestSquareStreak(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int n = nums.size();
+        vector<int> dp(n,1);
+        for(int i = 1;i<n;i++){
+            auto idx = std::lower_bound(nums.begin(), nums.end(), (int)sqrt(nums[i]));
+            long val = *idx;
+            if(val*val==(long)nums[i]){
+                dp[i] = dp[idx-nums.begin()]+1;
+            }
+        }
+        int ans = *max_element(dp.begin(),dp.end());
+        if(ans < 2){
+            return -1;
+        }
+        return ans;
+    }
+};
+}
+
+namespace weekly_contest323_3{
+    class Allocator {
+    public:
+        vector<int> a;
+        int x = 0;
+        Allocator(int n) {
+            a.resize(n);
+            x = n;
+        }
+
+        int allocate(int size, int mID) {
+            int cnt = 0;
+            for (int i = 0; i < x;i++)
+            {
+                if(a[i])
+                    cnt = 0;
+                else
+                    cnt++;
+                if(cnt==size)
+                {
+                    for (int j = i; j > i - cnt;j--)
+                    {
+                        a[j] = mID;
+                    }
+                    return i - cnt + 1;
+                }
+            }
+            return -1;
+        }
+
+        int free(int mID) {
+            int ans = 0;
+            for (int i = 0; i < x;i++)
+            {
+                if(a[i]==mID)ans ++, a[i] = 0;
+            }
+            return ans;
+        }
+    };
+}
+
+namespace weekly_contest323_4{
+
+}
+
+namespace P1781{
+class Solution {
+public:
+    int beautySum(string s) {
+        int res = 0;
+        for(int i = 0;i<s.size();i++){
+            vector<int> cnt(26);
+            int maxFreq = 0;
+            for (int j = i; j < s.size(); j++) {
+                cnt[s[j] - 'a']++;
+                maxFreq = max(maxFreq, cnt[s[j] - 'a']);
+                int minFreq = s.size();
+                for (int k = 0; k < 26; k++) {
+                    if (cnt[k] > 0) {
+                        minFreq = min(minFreq, cnt[k]);
+                    }
+                }
+                res += maxFreq - minFreq;
+            }
+        }
+        return res;
+    }
+};
+}
+
+namespace P146{
+class LRUCache {
+    struct DLinkedNode{
+        int key,value;
+        DLinkedNode* prev;
+        DLinkedNode* next;
+        DLinkedNode(): key(0), value(0), prev(nullptr), next(nullptr) {}
+        DLinkedNode(int _key, int _value): key(_key), value(_value), prev(nullptr), next(nullptr) {}
+    };
+
+    unordered_map<int,DLinkedNode*> cache;
+    DLinkedNode* head;
+    DLinkedNode* tail;
+    int size;
+    int capacity;
+public:
+    LRUCache(int capacity): capacity(capacity),size(0) {
+        head = new DLinkedNode();
+        tail = new DLinkedNode();
+        head->next = tail;
+        tail->next = head;
+    }
+
+    int get(int key) {
+        if(!cache.count(key)){
+            return -1;
+        }
+        DLinkedNode* node = cache.at(key);
+        move_to_head(node);
+        return node->value;
+    }
+
+    void put(int key, int value) {
+        if(cache.count(key)){   //已经存在
+            DLinkedNode* node = cache.at(key);
+            node->value = value;
+            move_to_head(node);
+        }else{
+            auto* node = new DLinkedNode(key,value);
+            cache[key] = node;
+            add_to_head(node);
+            ++size;
+            if(size>capacity){
+                auto deleteTail = delete_tail();
+                cache.erase(deleteTail->key);
+                delete deleteTail;
+                size--;
+            }
+        }
+    }
+
+    void add_to_head(DLinkedNode* node){
+        node->prev = head;
+        node->next = head->next;
+        head->next->prev = node;
+        head->next = node;
+    }
+
+    void delete_node(DLinkedNode* node){
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+    }
+
+    DLinkedNode* delete_tail(){
+        auto node = tail->prev;
+        delete_node(node);
+        return node;
+    }
+
+    void move_to_head(DLinkedNode* node){
+        delete_node(node);
+        add_to_head(node);
+    }
+};
+
+class Test{
+public:
+    //从nums中组合出小于n的最大的数
+    // 1<=n<=10^9, 1<=nums.size()<=10;
+    int getMinBelow(int n,vector<int>& nums){
+        sort(nums.begin(),nums.end());
+        if(nums[0]>=n){
+            return -1;
+        }
+        if(nums.size()==1&&nums[0]==0){
+            return 0;
+        }
+        string n_str = to_string(n);
+        int len = n_str.size();
+        //总共有len位,查看len位中组合出的最小的数能不能满足
+        int min_len = 0;
+        for(int i = 0;i<len;i++){
+            if(i==0&&nums[0]==0){
+                min_len = nums[1];
+            }else{
+                min_len = min_len*10+nums[0];
+            }
+        }
+        if(min_len >= n){
+            int max_len_1 = 0;
+            for(int i = 0;i<len-1;i++){
+                max_len_1 = max_len_1*10+nums.back();
+            }
+            return max_len_1;
+        }
+        //通过DFS递归查找len位
+        string ans;
+        dfs(n_str,nums,0,ans,true);
+        return stoi(ans);
+    }
+
+    //
+    bool dfs(const string& n_str,const vector<int>& nums,int index,string &ans, bool flag){
+        int len = n_str.size();
+        cout << "index = " << index << ",ans = " << ans << endl;
+        if(index >= len){
+            return true;
+        }
+        int num = n_str[index]-'0';
+        if(index == len-1){
+            if(flag){
+                //找出小于num的
+                int cur = -1;
+                for(int candi:nums){
+                    if(candi<num){
+                        cur = candi;
+                    }
+                }
+                if(cur == -1){
+                    return false;
+                }
+                ans += (cur+'0');
+                return true;
+            }else{
+                ans += ('0'+nums.back());
+                return true;
+            }
+        }else{
+            if(flag){
+                //找出小于等于num的
+                int cur = -1;
+                for(int candi:nums){
+                    if(candi<=num){
+                        cur = candi;
+                    }
+                }
+                if(cur == -1){
+                    return false;
+                }
+                ans += (cur+'0');
+                bool success = dfs(n_str,nums,index+1,ans,true);
+                if(!success){
+                    ans.pop_back();
+                    //找出比num小的
+                    cur = -1;
+                    for(int candi:nums){
+                        if(candi<num){
+                            cur = candi;
+                        }
+                    }
+                    if(cur==-1){
+                        return false;
+                    }
+                    ans += (cur+'0');
+                    return dfs(n_str,nums,index+1,ans,false);
+                }
+                return true;
+            }else{
+                ans += ('0'+nums.back());
+                return dfs(n_str,nums,index+1,ans,false);
+            }
+        }
+    }
+};
+
+double binarySearch(const vector<double>& vec,double standard_num){
+    int left = 0, right = vec.size()-1;
+    while(left<right){
+        int mid = (left+right)>>1;
+        cout<<"mid = " << mid << endl;
+        if(vec[mid]<standard_num){
+            left = mid+1;
+        }else{
+            right = mid;
+        }
+    }
+    cout << "left = " << left << endl;
+    if(left==0){
+        cout << "l1" << endl;
+        return vec[left];
+    }
+    if(abs(vec[left-1]-standard_num)<=abs(vec[left]-standard_num)){
+        cout << "l1" << endl;
+        return vec[left-1];
+    }else{
+        cout << "l1" << endl;
+        return vec[left];
+    }
+}
+
+int main_in(){
+    double standard_num;
+    vector<double> vec;
+    cin>>standard_num;
+    int N;
+    cin>>N;
+    for(int i = 0;i<N;i++){
+        double tmp;
+        cin>>tmp;
+        vec.push_back(tmp);
+    }
+    for(auto num:vec){
+        cout << num << ";;";
+    }
+    cout <<endl;
+    auto ans = binarySearch(vec,standard_num);
+    cout << "ans = " << ans;
+    return 0;
+}
+}
+
+namespace P1832{
+class Solution {
+public:
+    bool checkIfPangram(string sentence) {
+        vector<bool> show_up(26, false);
+        for(char ch:sentence){
+            show_up[ch-'a'] = true;
+        }
+        for(auto bl:show_up){
+            if(!bl){
+                return false;
+            }
+        }
+        return true;
+    }
+};
+}
+
+namespace P1753{
+class Solution {
+public:
+    int maximumScore(int a, int b, int c) {
+        if(a>=c){
+            swap(a,c);
+        }
+        if(b>=c){
+            swap(b,c);
+        }
+        int ans = 0;
+        while(a+b>c){
+            ans++;
+            a--;
+            b--;
+        }
+        ans += min(a+b,c);
+        return ans;
+    }
+};
+}
+
+namespace P1799{
+class Solution {
+public:
+    int maxScore(vector<int>& nums) {
+        int m = nums.size();
+        vector<int> dp(1<<m,0);
+        vector<vector<int>> gcd_tmp(m,vector<int>(m));
+        for (int i = 0; i < m; ++i) {
+            for (int j = i + 1; j < m; ++j) {
+                gcd_tmp[i][j] = gcd(nums[i], nums[j]);
+            }
+        }
+        int all = 1 << m;
+        for(int s = 1;s < all;++s){
+            int t = __builtin_popcount(s);
+            if (t & 1) {
+                continue;
+            }
+            for (int i = 0; i < m; ++i) {
+                if ((s >> i) & 1) {
+                    for (int j = i + 1; j < m; ++j) {
+                        if ((s >> j) & 1) {
+                            dp[s] = max(dp[s], dp[s ^ (1 << i) ^ (1 << j)] + t / 2 * gcd_tmp[i][j]);
+                        }
+                    }
+                }
+            }
+        }
+        return dp[all - 1];
+    }
+};
+}
+
+namespace P1945{
+class Solution {
+public:
+    int getLucky(string s, int k) {
+        string num = "";
+        for(char c:s){
+            num += to_string(c-'a'+1);
+        }
+        int res = 0;
+        bool is_first = true;
+        while(k-->0){
+            if(is_first){
+                res = getAllSum(num);
+                is_first = false;
+            }else {
+                res = getAllSum(to_string(res));
+            }
+        }
+        return res;
+    }
+
+    int getAllSum(const string& n){
+        int res = 0;
+        for(char c:n){
+            res += c-'0';
+        }
+        return res;
+    }
+};
+}
+
+namespace P1785{
+class Solution {
+public:
+    int minElements(vector<int>& nums, int limit, int goal) {
+        long sum = 0;
+        for(const int& num:nums){
+            sum += num;
+        }
+        long diff = abs(goal-sum);
+        return ceil((double)diff/(double)limit);
+    }
+};
+}
+
+namespace P1801{
+class Solution {
+private:
+    const int MOD = 1000000007;
+public:
+    int getNumberOfBacklogOrders(vector<vector<int>>& orders) {
+        priority_queue<pair<int,int>,vector<pair<int,int>>,less<>> buyOrders;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<>> sellOrders;
+        for(auto &&order:orders){
+            int price = order[0], amount = order[1], type = order[2];
+            if(type==0){    //购买订单
+                while (amount > 0 && !sellOrders.empty() && sellOrders.top().first <= price) {
+                    pair<int,int> sellOrder = sellOrders.top();
+                    sellOrders.pop();
+                    int sellAmount = min(amount, sellOrder.second);
+                    amount -= sellAmount;
+                    sellOrder.second -= sellAmount;
+                    if (sellOrder.second > 0) {
+                        sellOrders.push(sellOrder);
+                    }
+                }
+                if (amount > 0) {
+                    buyOrders.emplace(price, amount);
+                }
+            }else{  //销售订单
+                while(amount > 0 && !buyOrders.empty() && buyOrders.top().first >= price){
+                    pair<int,int> buyOrder = buyOrders.top();
+                    buyOrders.pop();
+                    int buyAmount = min(amount,buyOrder.second);
+                    amount -= buyAmount;
+                    buyOrder.second -= buyAmount;
+                    if(buyOrder.second > 0){
+                        buyOrders.push(buyOrder);
+                    }
+                }
+                if(amount > 0){
+                    sellOrders.emplace(price,amount);
+                }
+            }
+        }
+        int total = 0;
+        while(!buyOrders.empty()){
+            total = (total+buyOrders.top().second)%MOD;
+            buyOrders.pop();
+        }
+        while(!sellOrders.empty()){
+            total = (total+sellOrders.top().second)%MOD;
+            sellOrders.pop();
+        }
+        return total;
+    }
+};
+}
+
+namespace P2042{
+class Solution {
+public:
+    bool areNumbersAscending(string s) {
+        vector<int> vec;
+        for(int i = 0;i<s.size();i++){
+            if(isdigit(s[i])){
+                string tmp;
+                while(isdigit(s[i])){
+                    tmp += s[i++];
+                }
+                vec.push_back(stoi(tmp));
+            }
+        }
+        for(int i = 0;i<vec.size()-1;i++){
+            if(vec[i]>=vec[i+1]){
+                return false;
+            }
+        }
+        return true;
+    }
+};
+}
+
+namespace P1802{
+class Solution {
+public:
+    int maxValue(int n, int index, int maxSum) {
+        int left = 1, right = maxSum;
+        while (left < right) {
+            int mid = (left + right + 1) / 2;
+            if (valid(mid, n, index, maxSum)) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
+
+    bool valid(int mid, int n, int index, int maxSum) {
+        int left = index;
+        int right = n - index - 1;
+        return mid + cal(mid, left) + cal(mid, right) <= maxSum;
+    }
+
+    long cal(int big, int length) {
+        if (length + 1 < big) {
+            int small = big - length;
+            return (long) (big - 1 + small) * length / 2;
+        } else {
+            int ones = length - (big - 1);
+            return (long) big * (big - 1) / 2 + ones;
+        }
+    }
+};
+}
+
+namespace P1803{
+class Solution {
+    struct Trie{
+        array<Trie*,2> son{nullptr, nullptr}; //0为左子树，1为右子树
+        int sum;
+        Trie(): sum(0){}
+    };
+
+    Trie* root = nullptr;
+    static constexpr int HIGH_BIT = 14;
+public:
+    int countPairs(vector<int>& nums, int low, int high) {
+        return f(nums, high) - f(nums, low - 1);
+    }
+
+    void add(int num) {
+        Trie* cur = root;
+        for (int k = HIGH_BIT; k >= 0; k--) {
+            int bit = (num >> k) & 1;
+            if (cur->son[bit] == nullptr) {
+                cur->son[bit] = new Trie();
+            }
+            cur = cur->son[bit];
+            cur->sum++;
+        }
+    }
+
+    int get(int num, int x) {
+        Trie* cur = root;
+        int sum = 0;
+        for (int k = HIGH_BIT; k >= 0; k--) {
+            int r = (num >> k) & 1;
+            if ((x >> k) & 1) {
+                if (cur->son[r] != nullptr) {
+                    sum += cur->son[r]->sum;
+                }
+                if (cur->son[r ^ 1] == nullptr) {
+                    return sum;
+                }
+                cur = cur->son[r ^ 1];
+            } else {
+                if (cur->son[r] == nullptr) {
+                    return sum;
+                }
+                cur = cur->son[r];
+            }
+        }
+        sum += cur->sum;
+        return sum;
+    }
+
+    int f(vector<int>& nums, int x) {
+        root = new Trie();
+        int res = 0;
+        for (int i = 1; i < nums.size(); i++) {
+            add(nums[i - 1]);
+            res += get(nums[i], x);
+        }
+        return res;
+    }
+};
+}
+
 int main() {
-    auto solution = new P1774::Solution();
-    vector<int> baseCosts = {3,10};
-    vector<int> toppingCosts = {2,5};
-    int ans = solution->closestCost(baseCosts,toppingCosts,9);
-    cout << ans << endl;
+    P146::main_in();
 }
