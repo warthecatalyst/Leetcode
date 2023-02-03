@@ -1,7 +1,9 @@
 package main
 
-import "Go/Leetcode/Pro1807"
+import (
+	"Go/Leetcode/Pro1145"
+)
 
 func main() {
-	Pro1807.Main()
+	Pro1145.Main()
 }
