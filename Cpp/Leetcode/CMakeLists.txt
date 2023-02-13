@@ -3,4 +3,4 @@ project(Leetcode)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Leetcode main.cpp)
+add_executable(Leetcode main.cpp Pro1234.h global.h Pro1138.h)

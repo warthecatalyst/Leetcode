@@ -1,22 +1,4 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <algorithm>
-#include <memory>
-#include <vector>
-#include <string>
-#include <stack>
-#include <deque>
-#include <queue>
-#include <set>
-#include <list>
-#include <unordered_set>
-#include <map>
-#include <unordered_map>
-#include <random>
-#include <bits.h>
-
-using namespace std;
+#include "global.h"
 
 struct TreeNode {
     int val;
@@ -2312,6 +2294,75 @@ public:
         for (int i = 1; i < nums.size(); i++) {
             add(nums[i - 1]);
             res += get(nums[i], x);
+        }
+        return res;
+    }
+};
+}
+
+class AuthenticationManager {
+    int ttl;
+    unordered_map<string,int> token_expire_time;
+public:
+    AuthenticationManager(int timeToLive) :ttl(timeToLive) {}
+
+    void generate(string tokenId, int currentTime) {
+        token_expire_time[tokenId] = currentTime+ttl;
+    }
+
+    void renew(string tokenId, int currentTime) {
+        clear_expire_tokens(currentTime);
+        if(token_expire_time.count(tokenId)){
+            token_expire_time[tokenId] = currentTime+ttl;
+        }
+    }
+
+    int countUnexpiredTokens(int currentTime) {
+        clear_expire_tokens(currentTime);
+        return token_expire_time.size();
+    }
+private:
+    void clear_expire_tokens(int currentTime){
+        vector<string> expireTokens;
+        for(auto it = token_expire_time.begin();it != token_expire_time.end();it++){
+            if(it->second<=currentTime){
+                expireTokens.push_back(it->first);
+            }
+        }
+        for(const auto &str:expireTokens){
+            token_expire_time.erase(str);
+        }
+    }
+};
+
+namespace P1223{
+class Solution {
+public:
+    static constexpr int mod = 1E9 + 7;
+    int dieSimulator(int n, vector<int>& rollMax) {
+        vector d(n + 1, vector(6, vector<int>(16)));
+        for (int j = 0; j < 6; j++) {
+            d[1][j][1] = 1;
+        }
+        for (int i = 2; i <= n; i++) {
+            for (int j = 0; j < 6; j++) {
+                for (int k = 1; k <= rollMax[j]; k++) {
+                    for (int p = 0; p < 6; p++) {
+                        if (p != j) {
+                            d[i][p][1] = (d[i][p][1] + d[i - 1][j][k]) % mod;
+                        } else if (k + 1 <= rollMax[j]) {
+                            d[i][p][k + 1] = (d[i][p][k + 1] + d[i - 1][j][k]) % mod;
+                        }
+                    }
+                }
+            }
+        }
+
+        int res = 0;
+        for (int j = 0; j < 6; j++) {
+            for (int k = 1; k <= rollMax[j]; k++) {
+                res = (res + d[n][j][k]) % mod;
+            }
         }
         return res;
     }
