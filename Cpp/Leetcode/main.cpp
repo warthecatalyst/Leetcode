@@ -2369,6 +2369,132 @@ public:
 };
 }
 
+namespace palibaba1{
+class Solution{
+public:
+    vector<vector<int>> directions = {{-1,0},{1,0},{0,-1},{0,1}};
+
+    struct step{
+        vector<pair<int,int>> path;
+        int st;
+
+        step(){st = 0;}
+        step(int i, int j){
+            path.emplace_back(i,j);
+            st = 1;
+        }
+    };
+
+    vector<pair<int,int>> getPath(vector<string> &matrix,const string& str){
+        int n = matrix.size(), m = matrix[0].size();
+        queue<step> qu;
+        for(int i = 0;i<matrix.size();i++){
+            for(int j = 0;j<matrix[i].size();j++){
+                if(matrix[i][j]==str[0]){
+                    qu.emplace(i,j);
+                }
+            }
+        }
+        while(!qu.empty()){
+            auto& cur = qu.front();
+            qu.pop();
+            if(cur.st == str.size()){
+                return cur.path;
+            }
+            const auto& cur_location = cur.path.back();
+            int curx = cur_location.first, cury = cur_location.second;
+            char next = str[cur.st];
+            //找周围
+            for(int i = 0;i<4;i++){
+                int nextx = curx+directions[i][0],nexty = cury+directions[i][1];
+                if(nextx>=0&&nextx<n&&nexty>=0&&nexty<m&&matrix[nextx][nexty]==next){
+                    cur.path.emplace_back(nextx,nexty);
+                    cur.st++;
+                    qu.push(cur);
+                }
+            }
+        }
+        return vector<pair<int,int>>();
+    }
+};
+
+class ChessMatch{
+public:
+    typedef vector<pair<int,int>> Operator;
+    Operator operators;
+    vector<vector<int>> keyBoard;
+
+    ChessMatch(){
+        keyBoard = vector<vector<int>>(19,vector<int>(19,0));
+    }
+
+    bool playChess(int x,int y,int type){
+        //type == 1表示下白棋,type == 2表示下黑棋
+        if(type == 1){
+            if(keyBoard[x][y]==0){
+                keyBoard[x][y] = 1;
+                clearBoard();
+                operators.emplace_back(x,y);
+                return true;
+            }
+        }else if(type == 2){
+            if(keyBoard[x][y]==2){
+                keyBoard[x][y] = 2;
+                clearBoard();
+                operators.emplace_back(x,y);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    pair<int,int> record(int step){
+        if(step < operators.size()){
+            return operators[step];
+        }
+        return {-1,-1};
+    }
+
+    vector<vector<int>> getBoardByN(int n){
+        for(int i = 0;i<n;i++){
+            const auto& curOper = operators[i];
+            if(i%2==0){
+                playChess(curOper.first,curOper.second,1);
+            }else{
+                playChess(curOper.first,curOper.second,2);
+            }
+        }
+    }
+private:
+    //处理围棋棋盘，死掉的棋子变为0
+    void clearBoard(){
+
+    }
+};
+}
+
+namespace ali_operating_system{
+    size_t getOrder(vector<int> nums, int target){
+        size_t left = 0, right = nums.size();
+        while(left < right){
+            auto mid = (left+right)>>1;
+            if(nums[mid]==target){
+                return mid;
+            }else if(nums[mid]<target){
+                left = mid+1;
+            }else{
+                right = mid;
+            }
+        }
+        return right;
+    }
+}
+
+
 int main() {
-    P146::main_in();
+    vector<int> vec = {1,10,15,20,30,40,50};
+    vector<int> testings = {0,15,20,30,35,45,60};
+    for(int test:testings){
+        cout << test <<"," << ali_operating_system::getOrder(vec,test) << endl;
+    }
 }
