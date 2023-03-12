@@ -21,6 +21,7 @@
 #include <map>
 #include <unordered_map>
 #include <random>
+#include <functional>
 #include <bits.h>
 
 using namespace std;

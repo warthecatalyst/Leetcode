@@ -17,7 +17,7 @@ class Solution {
         for(int num:nums){
             set.add(num);
         }
-        for(int i = 1;i<n+1;i++){
+        for(int i = 1;i<=n;i++){
             if(!set.contains(i)){
                 return i;
             }
