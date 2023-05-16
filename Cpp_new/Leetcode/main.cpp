@@ -1,27 +1,21 @@
 #include "global.h"
 #include "DynamicProgramming.h"
 #include "ByteDance.h"
-
+#include "Tencent.h"
+#include "TencentMusic.h"
 
 int main() {
-    const double PI = 3.141593;
-//    DynamicProgramming::Xiecheng xiecheng;
-//    int n,total;
-//    vector<int> values;
-//    vector<int> interests;
-//    cin >> n >> total;
-//    for(int i = 0;i<n;i++){
-//        int temp;
-//        cin >> temp;
-//        values.push_back(temp);
-//    }
-//    for(int i = 0;i<n;i++){
-//        int temp;
-//        cin >> temp;
-//        interests.push_back(temp);
-//    }
-//
-//    cout << xiecheng.buyStockings(n,total,values,interests) << endl;
-    cout << sin(-PI/2-2*PI/3+4*PI) << endl;
-    return 0;
+    string str = "11223344";
+    do{
+        vector<vector<int>> indexes(4);
+        for(int i = 0;i<str.size();i++){
+            char c = str[i];
+            indexes[c-'1'].push_back(i);
+        }
+        if(indexes[3][1]-indexes[3][0]==5&&indexes[2][1]-indexes[2][0]==4
+        &&indexes[1][1]-indexes[1][0]==3&&indexes[0][1]-indexes[0][0]==2){
+            cout << str <<endl;
+        }
+    }
+    while(std::next_permutation(str.begin(), str.end()));
 }

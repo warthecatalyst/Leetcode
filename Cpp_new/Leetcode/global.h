@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstdlib>
+#include <climits>
 #include <cmath>
 #include <random>
 

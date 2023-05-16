@@ -8,62 +8,37 @@ type ListNode struct {
 }
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
-	cur1 := l1
-	cur2 := l2
-	add := 0
-	dummyhead := new(ListNode)
-	ans := dummyhead
-	for cur1 != nil || cur2 != nil {
-		if cur1 == nil {
-			curNum := cur2.Val + add
-			if curNum >= 10 {
-				curNum -= 10
-				add = 1
-			} else {
-				add = 0
-			}
-			ans.Next = &ListNode{
-				Val:  curNum,
-				Next: nil,
-			}
-			cur2 = cur2.Next
-		} else if cur2 == nil {
-			curNum := cur1.Val + add
-			if curNum >= 10 {
-				curNum -= 10
-				add = 1
-			} else {
-				add = 0
-			}
-			ans.Next = &ListNode{
-				Val:  curNum,
-				Next: nil,
-			}
-			cur1 = cur1.Next
+	dummyHead := &ListNode{Val: 0}
+	cur := dummyHead
+	carry := 0
+	for l1 != nil || l2 != nil {
+		bit := 0
+		if l1 == nil {
+			bit = l2.Val + carry
+			l2 = l2.Next
+		} else if l2 == nil {
+			bit = l1.Val + carry
+			l1 = l1.Next
 		} else {
-			curNum := cur1.Val + cur2.Val + add
-			if curNum >= 10 {
-				curNum -= 10
-				add = 1
-			} else {
-				add = 0
-			}
-			ans.Next = &ListNode{
-				Val:  curNum,
-				Next: nil,
-			}
-			cur1 = cur1.Next
-			cur2 = cur2.Next
+			bit = l1.Val + l2.Val + carry
+			l1 = l1.Next
+			l2 = l2.Next
 		}
-		ans = ans.Next
-	}
-	if add == 1 {
-		ans.Next = &ListNode{
-			Val:  1,
-			Next: nil,
+		if bit >= 10 {
+			bit -= 10
+			carry = 1
+		} else {
+			carry = 0
 		}
+		cur.Next = &ListNode{
+			Val: bit,
+		}
+		cur = cur.Next
 	}
-	return dummyhead.Next
+	if carry == 1 {
+		cur.Next = &ListNode{Val: carry}
+	}
+	return dummyHead.Next
 }
 
 func main() {
