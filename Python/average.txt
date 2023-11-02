@@ -1,0 +1,4 @@
+DELETE: 900.00ms
+GET: 456.00ms
+POST: 289.50ms
+PUT: 850.00ms
