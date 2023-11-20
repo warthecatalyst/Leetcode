@@ -1,63 +1,65 @@
-#include <vector>
 #include <iostream>
-#include <algorithm>
-#include <string>
-
+#include <typeinfo>
 using namespace std;
 
-int n,m;
-vector<int> a;
+class Flyable                       // 能飞的
+{
+public:
+    virtual void takeoff() = 0;     // 起飞
+    virtual void land() = 0;        // 降落
+};
+class Bird : public Flyable         // 鸟
+{
+public:
+    void foraging() {
+        cout << "foraging for a bird" << endl;
+    }           // 觅食
+    void takeoff() override {
+        cout << "bird taking off" << endl;
+    }
+    void land() override {
+        cout << "bird landing" << endl;
+    }
+    virtual ~Bird(){}
+};
+class Plane : public Flyable        // 飞机
+{
+public:
+    void carry() {
+        cout << "plane carrying" << endl;
+    }              // 运输
+    void takeoff() override {
+        cout << "plane taking off" << endl;
+    }
+    void land() override {
+        cout << "bird landing" << endl;
+    }
+};
 
+void doSomething(Flyable *obj)                 // 做些事情
+{
+    obj->takeoff();
 
-int main() {
-    cin >> n >> m;
-    a.resize(n);
-    vector<int> oddIndex;
-    vector<int> evenIndex;
-    for (int i = 0; i < n;i++) {
-        cin >> a[i];
-        if(a[i] % 2 == 0) {
-            evenIndex.push_back(i);
-        } else {
-            oddIndex.push_back(i);
-        }
+    cout << typeid(*obj).name() << endl;        // 输出传入对象类型（"class Bird" or "class Plane"）
+
+    if(typeid(*obj) == typeid(Bird))            // 判断对象类型
+    {
+        Bird *bird = dynamic_cast<Bird *>(obj); // 对象转化
+        bird->foraging();
+    } else if (typeid(*obj) == typeid(Plane)) {
+        Plane* plane = dynamic_cast<Plane *>(obj);
+        plane->carry();
     }
-    bool is_all = false;
-    for(int loop = 0; loop < m;loop++) {
-        int t, x;
-        cin >> t >> x;
-        if (is_all) {
-            if (t % 2 != a[0] % 2) {
-                continue;
-            }
-            std::transform(a.begin(), a.end(), a.begin(), [x](int &n) {
-                return n + x;
-            });
-        } else {
-            if (t == 1) {
-                for(int odIndex : oddIndex) {
-                    a[odIndex] += x;
-                }
-                //奇数变成偶数
-                if (x%2 == 1) {
-                    evenIndex.insert(evenIndex.end(), oddIndex.begin(),oddIndex.end());
-                    oddIndex.clear();
-                    is_all = true;
-                }
-            } else {
-                for(int evIndex : evenIndex) {
-                    a[evIndex] += x;
-                }
-                // 偶数变成奇数
-                if (x % 2 == 1) {
-                    oddIndex.insert(oddIndex.end(), evenIndex.begin(), evenIndex.end());
-                    evenIndex.clear();
-                    is_all = true;
-                }
-            }
-        }
-    }
-    for (int val : a) {
-        cout << val << " ";
-    }
+
+    obj->land();
+}
+
+int main(){
+    Bird *b = new Bird();
+    doSomething(b);
+    delete b;
+    Plane* p = new Plane();
+    doSomething(p);
+    delete p;
+    return 0;
 }

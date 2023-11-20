@@ -7,6 +7,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 public class MyThreadPool {
+    public static void main(String[] args) {
+        MyThreadPool myThreadPool = new MyThreadPool(5);
+        for(int loop = 0;loop < 20;loop++){
+            myThreadPool.submit(() -> {for(int i = 0;i < 100; i++) {
+                System.out.println("Thread " + Thread.currentThread().getName() + " is running, i = " + i);
+            }
+                return null;
+            }, null);
+        }
+    }
+
     static Random random = new Random();
     // 核心线程
     private WorkThread[] threads;
@@ -15,9 +26,9 @@ public class MyThreadPool {
 
     private BlockingQueue<FutureTask<Void>> taskQueue;
 
-    public MyThreadPool(int poolSize, int queueSize) {
+    public MyThreadPool(int poolSize) {
         this.poolSize = poolSize;
-        this.taskQueue = new ArrayBlockingQueue<>(queueSize);
+        this.taskQueue = new ArrayBlockingQueue<>(1000);
         this.threads = new WorkThread[poolSize];
         for(int i = 0; i < poolSize;i++) {
             threads[i] = new WorkThread();

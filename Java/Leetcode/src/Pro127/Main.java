@@ -1,11 +1,12 @@
 package Pro127;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
         String[] wordArray = new String[]{"hot","dot","dog","lot","log","cog"};
-        List<String> wordList = Arrays.stream(wordArray).toList();
+        List<String> wordList = Arrays.stream(wordArray).collect(Collectors.toList());
         Solution solution = new Solution();
         solution.ladderLength("hit","cog",wordList);
 

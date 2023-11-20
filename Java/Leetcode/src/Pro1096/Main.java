@@ -38,7 +38,7 @@ class Solution {
                 }
                 StringBuilder sb = new StringBuilder();
                 sb.append(expression.charAt(i));
-                stk.add(new TreeSet<>() {{
+                stk.add(new TreeSet<String>() {{
                     add(sb.toString());
                 }});
             }
