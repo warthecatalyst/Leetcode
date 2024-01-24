@@ -12,4 +12,15 @@ add_executable(Leetcode main.cpp global.h DynamicProgramming.h ByteDance.h pro16
         Pro1402.h
         Pro70.h
         Pro72.h
-        Pro2678.h)
+        Pro2678.h
+        Pro1944.h
+        Pro447.h
+        pro2707.h
+        Pro82.h
+        Pro2719.h
+        Pro2171.h
+        Pro2809.h
+        Pro670.h
+        pro2765.h
+        p2865.h
+)

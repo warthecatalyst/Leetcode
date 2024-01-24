@@ -25,6 +25,7 @@
 #include <climits>
 #include <cmath>
 #include <random>
+#include <cstring>
 
 using namespace std;
 
