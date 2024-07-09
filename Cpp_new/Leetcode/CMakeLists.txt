@@ -24,4 +24,6 @@ add_executable(Leetcode main.cpp global.h DynamicProgramming.h ByteDance.h pro16
         pro2765.h
         p2865.h
         Pro2846.h
+        pro1696.h
+        Pro724.h
 )
