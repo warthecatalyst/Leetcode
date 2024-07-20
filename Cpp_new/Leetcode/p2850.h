@@ -1,0 +1,40 @@
+//
+// Created by Admin on 2024/7/20.
+//
+
+#ifndef LEETCODE_P2850_H
+#define LEETCODE_P2850_H
+#include "global.h"
+
+namespace p2850 {
+class Solution {
+public:
+    int minimumMoves(vector<vector<int>>& grid) {
+        vector<pair<int, int>> more, less;
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                if (grid[i][j] > 1) {
+                    for (int k = 2; k <= grid[i][j]; ++k) {
+                        more.emplace_back(i, j);
+                    }
+                }
+                else if (grid[i][j] == 0) {
+                    less.emplace_back(i, j);
+                }
+            }
+        }
+
+        int ans = INT_MAX;
+        do {
+            int steps = 0;
+            for (int i = 0; i < more.size(); ++i) {
+                steps += abs(more[i].first - less[i].first) + abs(more[i].second - less[i].second);
+            }
+            ans = min(ans, steps);
+        } while (next_permutation(more.begin(), more.end()));
+        return ans;
+    }
+};
+}
+
+#endif //LEETCODE_P2850_H
